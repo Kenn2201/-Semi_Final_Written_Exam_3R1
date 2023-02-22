@@ -22,8 +22,71 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.yellow[200],
       appBar: AppBar(
-        title: const Text('ToDo'),
+        title: const Text('About Me'),
         elevation: 0,
+      ),
+      endDrawer: Drawer(
+        backgroundColor: Colors.yellow[200],
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                    color: Colors.yellow
+                ),
+                child: Text(
+                    'About Me'
+                ),),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text(
+                  'Developed By:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Kenn Vincent A. Nacario',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text(
+                  'From Section:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  '3R-1',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text(
+                  'Software Version',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  '1.1',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Center(
         child: FutureBuilder<List<TodoItem>>(
@@ -52,11 +115,11 @@ class _HomePageState extends State<HomePage> {
                           todos.removeAt(index);
 
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${todoItem.title} Item Successfully deleted!')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${todoItem.name} Item Successfully deleted!')));
                         print(snapshot.data);
                       },
                       child: ListTile(
-                        title: Text(todoItem.title),
+                        title: Text('${todoItem.name}'),
                         trailing: ElevatedButton(
                           onPressed: ()async{
                             var updatedTodo1 = await Navigator.push(

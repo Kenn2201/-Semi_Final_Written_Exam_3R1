@@ -4,25 +4,41 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TodoItem{
-  int userId;
-  int id;
-  String title;
-  String completed;
 
-  TodoItem({required this.userId,required this.id,required this.title,required this.completed});
+  int id;
+
+  String name;
+  int age;
+  String birthdate;
+  String address;
+  String hobbies;
+  String? imagePath;
+
+
+  TodoItem({required this.id,required this.name,required this.age,required this.birthdate,required this.address,
+  required this.hobbies,this.imagePath,});
 
   factory TodoItem.fromMap(Map<String,dynamic>json) => TodoItem(
-      userId: json['userId'],
       id: json['id'],
-      title: json['title'],
-      completed: json['completed']);
+
+      name: json['name'],
+      age: json['age'],
+      birthdate: json['birthdate'],
+      address: json['address'],
+      hobbies: json['hobbies'],
+
+  );
 
   Map<String,dynamic> toJson(){
     return {
-      'userId': userId,
       'id':id,
-      'title':title,
-      'completed': completed,
+
+      'name': name,
+      'age': age,
+      'birthdate': birthdate,
+      'address': address,
+      'hobbies': hobbies,
+
     };
   }
 }
@@ -47,7 +63,7 @@ class DatabaseHelper{
   }
 
   Future _onCreate(Database db, int version) async{
-    await db.execute('CREATE TABLE todo_items(id INTEGER PRIMARY KEY, userId INTEGER, title TEXT, completed INTEGER)');
+    await db.execute('CREATE TABLE todo_items(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, birthdate TEXT, address TEXT, hobbies TEXT)');
   }
 
   Future<List<TodoItem>> getTodoItem() async{
@@ -69,4 +85,6 @@ class DatabaseHelper{
     Database db = await instance.database;
     return await db.update('todo_items', todoItem2.toJson(),where: 'id = ?', whereArgs: [id]);
   }
+
+
 }

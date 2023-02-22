@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:camera/camera.dart';
 import 'todo_model.dart';
+import 'dart:io';
+import 'dart:async';
+import 'package:image_picker/image_picker.dart';
 
-const List<String> items1 = <String>[
-  ' ',
-  'true',
-  'false',
-];
 class AddTodo extends StatefulWidget {
   const AddTodo({Key? key}) : super(key: key);
 
@@ -17,50 +15,48 @@ class AddTodo extends StatefulWidget {
 class _AddTodoState extends State<AddTodo> {
   var formKey = GlobalKey<FormState>();
 
-  final userIdText =  TextEditingController();
   final idText =  TextEditingController();
-  final titleText =  TextEditingController();
-  String completedtext = items1.first;
+
+  final nametext = TextEditingController();
+  final agetext= TextEditingController();
+  final birthdatetext = TextEditingController();
+  final addresstext = TextEditingController();
+  final hobbiestext = TextEditingController();
+
 
 
   @override
   void dispose(){
-    userIdText.dispose();
     idText.dispose();
-    titleText.dispose();
+
+    nametext.dispose();
+    agetext.dispose();
+    birthdatetext.dispose();
+    addresstext.dispose();
+    hobbiestext.dispose();
+
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add ToDo'),
+        title: const Text('Add Info'),
       ),
       body: Form(
         key: formKey,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            TextFormField(
-              controller: userIdText,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                hintText: 'User ID',
-                labelText: 'Ex: 1',
-              ),
-              validator: (idnum){
-                return (idnum == '') ? 'Please enter User ID' : null;
-              },
-            ),
-            const SizedBox(height: 20),
+
+
             TextFormField(
               controller: idText,
               keyboardType: TextInputType.name,
               decoration: const InputDecoration(
-                hintText: 'ID number',
-                labelText: 'Ex: 1',
+                hintText: 'Ex. 1',
+                labelText: 'ID number',
               ),
               validator: (idnum){
                 return (idnum == '') ? 'Please enter ID number' : null;
@@ -68,32 +64,63 @@ class _AddTodoState extends State<AddTodo> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: titleText,
+              controller: nametext,
               keyboardType: TextInputType.name,
               decoration: const InputDecoration(
-                hintText: 'Title',
-                labelText: 'Ex: Harry Potter',
+                hintText: 'Ex: Kenn Vincent A. Nacario',
+                labelText: 'Input Name',
               ),
               validator: (idnum){
-                return (idnum == '') ? 'Please enter Title' : null;
+                return (idnum == '') ? 'Please enter name' : null;
               },
             ),
             const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-                hint: const Text(' '),
-                icon: const Icon(Icons.arrow_drop_down),
-                value: completedtext,
-                onChanged: (String? value){
-                  setState(() {
-                    completedtext = value!;
-                  });
-                },
-                items: items1.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList()
+            TextFormField(
+              controller: agetext,
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                hintText: 'Ex: 22',
+                labelText: 'Input age',
+              ),
+              validator: (idnum){
+                return (idnum == '') ? 'Please enter age' : null;
+              },
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: birthdatetext,
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                hintText: 'Ex: 02/02/2001',
+                labelText: 'Input birthdate',
+              ),
+              validator: (idnum){
+                return (idnum == '') ? 'Please enter birthdate' : null;
+              },
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: addresstext,
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                hintText: 'Ex: Barra Opol, Misamis Oriental',
+                labelText: 'Input address',
+              ),
+              validator: (idnum){
+                return (idnum == '') ? 'Please enter address' : null;
+              },
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: hobbiestext,
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                hintText: 'Ex: ''[biking,fishing,cooking]''',
+                labelText: 'Input hobbies',
+              ),
+              validator: (idnum){
+                return (idnum == '') ? 'Please enter hobbies' : null;
+              },
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -103,11 +130,16 @@ class _AddTodoState extends State<AddTodo> {
                   var validform = formKey.currentState!.validate();
                   if (validform) {
                     print('The Text Inputted are valid!');
+
+
                     TodoItem newTodoitem = TodoItem(
-                          userId: int.parse(userIdText.text),
                           id: int.parse(idText.text),
-                          title: titleText.text,
-                          completed: completedtext,
+                          name: nametext.text,
+                          age: int.parse(agetext.text),
+                          birthdate: birthdatetext.text,
+                          address: addresstext.text,
+                          hobbies: hobbiestext.text,
+
                         );
                     await DatabaseHelper.instance.add(newTodoitem);
                     print(newTodoitem);
