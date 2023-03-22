@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
 import 'todo_model.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
+
+
 
 class AddTodo extends StatefulWidget {
   const AddTodo({Key? key}) : super(key: key);
@@ -13,6 +14,72 @@ class AddTodo extends StatefulWidget {
 }
 
 class _AddTodoState extends State<AddTodo> {
+  File? _imageFile;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Widget _buildProfileImage() {
+
+    if (_imageFile != null) {
+      return Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          CircleAvatar(
+            backgroundImage: FileImage(_imageFile!),
+            radius: 70,
+          ),
+
+        ],
+      );
+    } else {
+      return CircleAvatar(
+        radius: 70,
+        child: IconButton(
+          icon: const Icon(Icons.camera_alt),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.photo_camera),
+                        title: const Text('Take a picture'),
+                        onTap: () {
+                          _pickImage(ImageSource.camera);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.photo_library),
+                        title: const Text('Choose from gallery'),
+                        onTap: () {
+                          _pickImage(ImageSource.gallery);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      );
+    }
+  }
+
+
+
   var formKey = GlobalKey<FormState>();
 
   final idText =  TextEditingController();
@@ -41,6 +108,7 @@ class _AddTodoState extends State<AddTodo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow[200],
       appBar: AppBar(
         title: const Text('Add Info'),
       ),
@@ -49,8 +117,7 @@ class _AddTodoState extends State<AddTodo> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-
-
+            Center(child: _buildProfileImage()),
             TextFormField(
               controller: idText,
               keyboardType: TextInputType.name,
@@ -131,7 +198,10 @@ class _AddTodoState extends State<AddTodo> {
                   if (validform) {
                     print('The Text Inputted are valid!');
 
-
+                    if (_imageFile == null) {
+                      return;
+                    }
+                    List<int> imageBytes = await _imageFile!.readAsBytes();
                     TodoItem newTodoitem = TodoItem(
                           id: int.parse(idText.text),
                           name: nametext.text,
@@ -139,7 +209,7 @@ class _AddTodoState extends State<AddTodo> {
                           birthdate: birthdatetext.text,
                           address: addresstext.text,
                           hobbies: hobbiestext.text,
-
+                          imagePath: imageBytes as dynamic,
                         );
                     await DatabaseHelper.instance.add(newTodoitem);
                     print(newTodoitem);
@@ -149,6 +219,7 @@ class _AddTodoState extends State<AddTodo> {
                 child: const Text('Submit'),
               ),
             ),
+
           ],
         ),
       ),

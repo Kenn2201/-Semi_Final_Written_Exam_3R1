@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'add_todo.dart';
 import 'todo_model.dart';
 import 'todo_info.dart';
@@ -15,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List todos = <dynamic>[];
-
+  final currentuser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +34,15 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
+               DrawerHeader(
+                decoration: const BoxDecoration(
                     color: Colors.yellow
                 ),
                 child: Text(
-                    'About Me'
-                ),),
+                  'Signed In as: \n${currentuser.email!}',
+                  style: const TextStyle(fontSize: 30),
+                ),
+              ),
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text(
@@ -78,24 +82,48 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 subtitle: Text(
-                  '1.1',
+                  '1.2',
                   style: TextStyle(
                     color: Colors.grey[600],
                   ),
                 ),
               ),
+
+              const Divider(height: 300,),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text(
+                  'Log-out',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Tap here!',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (route) => false);
+                },
+              ),
+
             ],
           ),
         ),
       ),
       body: Center(
         child: FutureBuilder<List<TodoItem>>(
-          future: DatabaseHelper.instance.getTodoItem(),
+          future: DatabaseHelper.instance.getTodoItems(),
           builder: (context, AsyncSnapshot<List<TodoItem>> snapshot){
             if(snapshot.hasData){
-
               print('${snapshot.data} snapshot');
+
               if(snapshot.data!.isEmpty){
+
                 return const Center(
                   child: Text('no data'),
                 );

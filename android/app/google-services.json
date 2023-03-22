@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "166503474376",
+    "project_id": "about-me-login-authentication",
+    "storage_bucket": "about-me-login-authentication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166503474376:android:9c99130b0d17dd8a8771fd",
+        "android_client_info": {
+          "package_name": "com.example.crudsql"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166503474376-if7irt38ss7aa1q1781s24kisjhm2jeg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtcDzWk49Vl0GIkbb0x5TEtJK2L0_ffTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166503474376-if7irt38ss7aa1q1781s24kisjhm2jeg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

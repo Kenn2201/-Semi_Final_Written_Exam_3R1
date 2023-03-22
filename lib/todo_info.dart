@@ -1,7 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'todo_model.dart';
 
 class ToDoInfo extends StatefulWidget {
   final dynamic todo;
@@ -24,75 +28,72 @@ class _ToDoInfoState extends State<ToDoInfo> {
     }
   }
 
-  Future<void> _saveImage() async {
-    // Here, you would typically save the image file to your database or storage service
-    // For this example, we'll just print a message to the console
-    print('Image saved!');
-  }
-
-
-  Widget _buildProfileImage() {
+  Widget _buildProfileImage(dynamic image) {
     if (_imageFile != null) {
-      return Stack(
-        alignment: AlignmentDirectional.bottomCenter,
-        children: [
-          CircleAvatar(
-            backgroundImage: FileImage(_imageFile!),
-            radius: 50,
-          ),
-          Container(
-            width: 100,
-            height: 32,
-            color: Colors.black54,
-            child: TextButton(
-              onPressed: _saveImage,
-              child: const Text(
-                'Save Image',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          )
-        ],
-      );
-    } else {
       return CircleAvatar(
-        child: IconButton(
-          icon: Icon(Icons.camera_alt),
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.photo_camera),
-                        title: Text('Take a picture'),
-                        onTap: () {
-                          _pickImage(ImageSource.camera);
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.photo_library),
-                        title: Text('Choose from gallery'),
-                        onTap: () {
-                          _pickImage(ImageSource.gallery);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-        ),
-        radius: 50,
+        backgroundImage: FileImage(_imageFile!),
+        radius: 150,
       );
+    } else if (image != null) {
+      if (image is String) {
+        File file = File(image);
+        if (file.existsSync()) {
+          return CircleAvatar(
+            backgroundImage: FileImage(file),
+            radius: 150,
+          );
+        } else {
+          return const SizedBox();
+        }
+      } else if (image is Uint8List) {
+        return CircleAvatar(
+          backgroundImage: MemoryImage(image),
+          radius: 100,
+        );
+      }
     }
+    return CircleAvatar(
+      radius: 100,
+      child: IconButton(
+        icon: const Icon(Icons.camera_alt),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.photo_camera),
+                      title: const Text('Take a picture'),
+                      onTap: () {
+                        _pickImage(ImageSource.camera);
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.photo_library),
+                      title: const Text('Choose from gallery'),
+                      onTap: () {
+                        _pickImage(ImageSource.gallery);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
+
+
+
+
+
 
   Widget rowItem(String title, dynamic value) {
     return Row(
@@ -110,13 +111,14 @@ class _ToDoInfoState extends State<ToDoInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow[200],
       appBar: AppBar(
         title: const Text('About Me Info'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(10),
         children: [
-          Center(child: _buildProfileImage()),
+          Center(child: _buildProfileImage(widget.todo.imagePath)),
           const SizedBox(height: 10),
           rowItem("ID", widget.todo.id),
           rowItem("Name", widget.todo.name),
